@@ -1,34 +1,27 @@
 pipeline {
-  agent any
+    agent any
 
-  stages {
-    stage('Clone') {
-      steps {
-        echo 'Cloning repo...'
-      }
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t my-python-app .'
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker run --rm my-python-app'
+            }
+        }
     }
 
-    stage('Run Python') {
-      steps {
-        sh 'python3 pattern.py'
-      }
+    post {
+        success {
+            echo '✅ Docker pipeline success!'
+        }
+        failure {
+            echo '❌ Docker pipeline failed!'
+        }
     }
-
-    stage('Deploy') {
-      steps {
-        echo 'Deploying app...'
-      }
-    }
-  }
-  post {
-    success {
-      echo '✅ Pipeline succeeded!'
-    }
-    failure {
-      echo '❌ Pipeline failed!'
-    }
-    always {
-      echo '🔁 Pipeline finished!!!'
-    }
-  }
 }
